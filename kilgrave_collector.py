@@ -38,6 +38,7 @@ def main():
   collector_server = kilgrave_collector()
   for i in range(len(target_machines)):
     collector_server.wait_for_response()
+  collector_server.shutdown()
 
 
 if __name__ == "__main__":

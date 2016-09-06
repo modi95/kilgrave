@@ -1,7 +1,9 @@
 import struct
 import socket
 import sys
+import kilgrave_collector
 
+from multiprocessing import Process
 from config import *
 
 def send_orders(order):
@@ -24,5 +26,8 @@ if __name__ == "__main__":
     print("You can't run kilgrave without args")
     exit(1)
   order = build_order()
+  collector = Process(target=kilgrave_collector.main)
+  collector.start()
   send_orders(order)
+  collector.join()
 
