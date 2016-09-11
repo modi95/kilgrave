@@ -62,6 +62,6 @@ if __name__ == "__main__":
   try:
     main()
   except KeyboardInterrupt:
-    print(" Shutting Down Kilgrave Executor")
+    print("Shutting Down Kilgrave Executor")
     executor_server.shutdown()
 

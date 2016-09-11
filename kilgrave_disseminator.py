@@ -9,11 +9,14 @@ from config import *
 def send_orders(order):
   for machine in target_machines:
     executor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    executor.connect((machine, executor_port))
-    executor.sendall(order)
-    response = executor.recv(len(execution_ack_string))
-    print (response)
-    executor.close()
+    try:
+      executor.connect((machine, executor_port))
+      executor.sendall(order)
+      response = executor.recv(len(execution_ack_string))
+      print (response)
+      executor.close()
+    except socket.error:
+      print("Could not connect to {}.".format(machine))
 
 def build_order():
   raw_order = ' '.join(sys.argv[1:])
@@ -27,7 +30,10 @@ if __name__ == "__main__":
     exit(1)
   order = build_order()
   collector = Process(target=kilgrave_collector.main)
-  collector.start()
-  send_orders(order)
-  collector.join()
+  try:
+    collector.start()
+    send_orders(order)
+    collector.join()
+  except KeyboardInterrupt:
+    print("Keyboard Interrupt Caught")
 

@@ -1,5 +1,7 @@
-import struct
+import multiprocessing
 import socket
+import struct
+import time
 
 from config import *
 
@@ -12,6 +14,7 @@ class kilgrave_collector():
   def __init__(self):
     self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    self.server_socket.settimeout(len(target_machines)*3)
     self.server_socket.bind((socket.gethostname(), collector_port))
     self.server_socket.listen(len(target_machines_prod))
     self.output_file = open('output_file', 'w')
@@ -36,14 +39,15 @@ class kilgrave_collector():
 def main():
   global collector_server
   collector_server = kilgrave_collector()
-  for i in range(len(target_machines)):
-    collector_server.wait_for_response()
-  collector_server.shutdown()
-
+  try:
+    for i in range(len(target_machines)):
+      collector_server.wait_for_response()
+    collector_server.shutdown()
+  except KeyboardInterrupt:
+    print("Shutting Down Kilgrave Collector")
+    collector_server.shutdown()
+  except socket.timeout:
+    print("Done waiting, some machines appear to have died :(")
 
 if __name__ == "__main__":
-  try:
-    main()
-  except KeyboardInterrupt:
-    print (' Shutting Killgrave Collector')
-    collector_server.shutdown()
+  main()
