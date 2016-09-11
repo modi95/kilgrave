@@ -16,7 +16,7 @@ class kilgrave_collector():
     self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     self.server_socket.settimeout(len(target_machines)*3)
     self.server_socket.bind((socket.gethostname(), collector_port))
-    self.server_socket.listen(len(target_machines_prod))
+    self.server_socket.listen(len(target_machines))
     self.output_file = open('output_file', 'w')
 
   def wait_for_response(self):
