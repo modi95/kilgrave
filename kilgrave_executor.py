@@ -60,6 +60,7 @@ class kilgrave_executor():
         collector.sendall(order_response)
         collector.close()
         print('report sent')
+        return
       except socket.error as er:
         if er.errno == errno.ECONNREFUSED:
           print("Collector connection refused. Trying again")
