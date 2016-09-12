@@ -37,6 +37,7 @@ class kilgrave_collector():
     self.output_file.write(order_output + '\r\n\r\n END OF RESPONSE \r\n')
 
   def shutdown(self):
+    print("Shuttting down collector")
     self.output_file.close()
     self.server_socket.close()
 
@@ -58,6 +59,7 @@ def main():
     collector_server.shutdown()
   except socket.timeout:
     print("Done waiting, some machines appear to have died :(")
+    collector_server.shutdown()
 
 if __name__ == "__main__":
   main()
