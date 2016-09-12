@@ -1,8 +1,10 @@
-import struct
-import socket
-import time
-from subprocess import check_output
+import errno
 import os # TODO (@akmodi): Change this to subprocess
+import socket
+import struct
+import time
+
+from subprocess import check_output
 
 from config import *
 

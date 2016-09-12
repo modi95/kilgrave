@@ -1,9 +1,10 @@
-import struct
 import socket
+import struct
 import sys
-import kilgrave_collector
 
 from multiprocessing import Process
+
+import kilgrave_collector
 from config import *
 
 def send_orders(order):
