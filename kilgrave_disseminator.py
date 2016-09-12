@@ -25,13 +25,13 @@ def build_order():
   return kilgrave_order
 
 if __name__ == "__main__":
-  if (len(sys.argv) == 1):
-    print("You can't run kilgrave without args")
-    exit(1)
-  order = build_order()
-  collector = Process(target=kilgrave_collector.main)
   try:
+    if (len(sys.argv) == 1):
+      print("You can't run kilgrave without args")
+      exit(1)
+    collector = Process(target=kilgrave_collector.main)
     collector.start()
+    order = build_order()
     send_orders(order)
     collector.join()
   except KeyboardInterrupt:

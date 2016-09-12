@@ -1,5 +1,6 @@
 import struct
 import socket
+import time
 from subprocess import check_output
 import os # TODO (@akmodi): Change this to subprocess
 
@@ -47,13 +48,25 @@ class kilgrave_executor():
     self.server_socket.close()
 
   def report_output(self, order_output, listener_address):
-    print(order_output)
-    collector = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    collector.connect((listener_address[0], collector_port))
-    order_response = length_padder(len(order_output)) + order_output
-    collector.sendall(order_response)
-    collector.close()
-    print('report sent')
+    attempts = 3 # TODO(akmodi): set this in a better way
+    while (attempts > 0):
+      try:
+        attempts -= 1
+        time.sleep(1)
+        print(order_output)
+        collector = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        collector.connect((listener_address[0], collector_port))
+        order_response = length_padder(len(order_output)) + order_output
+        collector.sendall(order_response)
+        collector.close()
+        print('report sent')
+      except socket.error as er:
+        if er.errno == errno.ECONNREFUSED:
+          print("Collector connection refused. Trying again")
+          continue
+        else:
+          raise er
+    print("Giving up. Report not sent")
 
 def main():
   global executor_server
@@ -70,6 +83,7 @@ if __name__ == "__main__":
   try:
     main()
   except KeyboardInterrupt:
-    print("Shutting Down Kilgrave Executor")
+    # Space at the start of string because ^C
+    print(" Shutting Down Kilgrave Executor")
     executor_server.shutdown()
 
